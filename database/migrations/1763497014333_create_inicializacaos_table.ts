@@ -59,7 +59,7 @@ export default class extends BaseSchema {
     this.schema.createTable('amostras', (table) => {
       table.increments('id')
       table.string('nome', 255).notNullable()
-      table.string('foto', 255).notNullable()
+      table.string('foto', 255)
       table.datetime('data_recebimento').notNullable()
 
       table
@@ -92,6 +92,20 @@ export default class extends BaseSchema {
       table.string('identificacao', 100).notNullable().unique()
       table.decimal('valor_orcamento', 12, 2).notNullable()
       table.enum('status', ['PENDENTE', 'APROVADO', 'RECUSADO']).notNullable().defaultTo('PENDENTE')
+
+      table
+      .integer('cliente_id')
+      .unsigned()
+      .references('clientes.id')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
+
+      table
+      .integer('amostra_id')
+      .unsigned()
+      .references('amostras.id')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
