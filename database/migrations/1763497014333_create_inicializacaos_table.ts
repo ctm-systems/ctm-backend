@@ -6,7 +6,6 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('nome', 255).notNullable()
       table.string('matricula', 100).notNullable().unique()
-      table.string('senha', 180).notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
@@ -15,8 +14,8 @@ export default class extends BaseSchema {
     this.schema.createTable('clientes', (table) => {
       table.increments('id')
       table.string('nome', 255).notNullable()
-      table.string('cpf', 20).notNullable().unique()
-      table.string('cnpj', 20).notNullable().unique()
+      table.string('cpf', 20).unique()
+      table.string('cnpj', 20).unique()
       table.string('cep', 20).notNullable()
       table.string('endereco', 255).notNullable()
 
@@ -90,22 +89,21 @@ export default class extends BaseSchema {
     this.schema.createTable('orcamentos', (table) => {
       table.increments('id')
       table.string('identificacao', 100).notNullable().unique()
-      table.decimal('valor_orcamento', 12, 2).notNullable()
       table.enum('status', ['PENDENTE', 'APROVADO', 'RECUSADO']).notNullable().defaultTo('PENDENTE')
 
       table
-      .integer('cliente_id')
-      .unsigned()
-      .references('clientes.id')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE')
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table
-      .integer('amostra_id')
-      .unsigned()
-      .references('amostras.id')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE')
+        .integer('amostra_id')
+        .unsigned()
+        .references('amostras.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
@@ -115,25 +113,25 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table
-      .integer('cliente_id')
-      .unsigned()
-      .references('clientes.id')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE')
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table
-      .integer('planilha_id')
-      .unsigned()
-      .references('planilhas.id')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE')
+        .integer('planilha_id')
+        .unsigned()
+        .references('planilhas.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table
-      .integer('orcamento_id')
-      .unsigned()
-      .references('orcamentos.id')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE')
+        .integer('orcamento_id')
+        .unsigned()
+        .references('orcamentos.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
