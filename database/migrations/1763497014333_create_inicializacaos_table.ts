@@ -14,6 +14,8 @@ export default class extends BaseSchema {
     this.schema.createTable('clientes', (table) => {
       table.increments('id')
       table.string('nome', 255).notNullable()
+      table.string('email', 255).unique()
+      table.string('telefone', 30).notNullable()
       table.string('cpf', 20).unique()
       table.string('cnpj', 20).unique()
       table.string('cep', 20).notNullable()
@@ -23,6 +25,27 @@ export default class extends BaseSchema {
         .integer('tecnico_id')
         .unsigned()
         .references('tecnicos.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table.timestamp('created_at')
+      table.timestamp('updated_at')
+    })
+
+    this.schema.createTable('tecnico_cliente', (table) => {
+      table.increments('id')
+
+      table
+        .integer('tecnico_id')
+        .unsigned()
+        .references('tecnicos.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
 
@@ -72,6 +95,27 @@ export default class extends BaseSchema {
         .integer('tipo_amostra_id')
         .unsigned()
         .references('tipo_amostras.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table
+        .integer('processo_id')
+        .unsigned()
+        .references('processos.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table.timestamp('created_at')
+      table.timestamp('updated_at')
+    })
+
+    this.schema.createTable('amostra_processos', (table) => {
+      table.increments('id')
+
+      table
+        .integer('amostra_id')
+        .unsigned()
+        .references('amostras.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
 
