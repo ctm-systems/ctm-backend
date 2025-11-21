@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Cliente from './cliente.js'
 import TipoAmostra from './tipo_amostra.js'
-import Processo from './processo.js'
 import Orcamento from './orcamento.js'
+import Processo from './processo.js'
 
 export default class Amostra extends BaseModel {
   @column({ isPrimary: true })
@@ -26,7 +26,12 @@ export default class Amostra extends BaseModel {
   declare tipoAmostraId: number
 
   @column()
-  declare processoId: number
+  declare orcamentoId: number
+
+  @manyToMany(() => Processo, {
+    pivotTable: 'amostra_processos',
+  })
+  declare processos: ManyToMany<typeof Processo>
 
   @belongsTo(() => Cliente)
   declare cliente: BelongsTo<typeof Cliente>
@@ -34,11 +39,8 @@ export default class Amostra extends BaseModel {
   @belongsTo(() => TipoAmostra)
   declare tipoAmostra: BelongsTo<typeof TipoAmostra>
 
-  @belongsTo(() => Processo)
-  declare processo: BelongsTo<typeof Processo>
-
-  @hasOne(() => Orcamento)
-  declare orcamento: HasOne<typeof Orcamento>
+  @belongsTo(() => Orcamento)
+  declare orcamento: BelongsTo<typeof Orcamento>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

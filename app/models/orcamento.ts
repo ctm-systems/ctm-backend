@@ -6,9 +6,9 @@ import Amostra from './amostra.js'
 import Laudo from './laudo.js'
 
 export enum Status {
-    PENDENTE = 'pendente',
-    APROVADO = 'aprovado',
-    REPROVADO = 'reprovado'
+    PENDENTE = 'PENDENTE',
+    APROVADO = 'APROVADO',
+    RECUSADO = 'RECUSADO',
   }
 
 export default class Orcamento extends BaseModel {
@@ -17,9 +17,6 @@ export default class Orcamento extends BaseModel {
 
   @column()
   declare identificacao: string
-  
-  @column()
-  declare valorOrcamento: number
 
   @column()
   declare status: Status
@@ -27,14 +24,11 @@ export default class Orcamento extends BaseModel {
   @column()
   declare clienteId: number
 
-  @column()
-  declare amostraId: number
-
   @belongsTo(() => Cliente)
   declare cliente: BelongsTo<typeof Cliente>
 
-  @belongsTo(() => Amostra)
-  declare amostra: BelongsTo<typeof Amostra>
+  @hasMany(() => Amostra)
+  declare amostras: HasMany<typeof Amostra>
 
   @hasMany(() => Laudo)
   declare laudos: HasMany<typeof Laudo>

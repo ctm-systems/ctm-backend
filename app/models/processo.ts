@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import Amostra from './amostra.js'
 
 export default class Processo extends BaseModel {
@@ -13,8 +13,10 @@ export default class Processo extends BaseModel {
   @column()
   declare preco: number
 
-  @hasMany(() => Amostra)
-  declare amostras: HasMany<typeof Amostra>
+  @manyToMany(() => Amostra, {
+    pivotTable: 'amostra_processos',
+  })
+  declare amostras: ManyToMany<typeof Amostra>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

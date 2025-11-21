@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany, HasMany } from '@adonisjs/lucid/types/relations'
 import Tecnico from './tecnico.js'
 import Amostra from './amostra.js'
 import Orcamento from './orcamento.js'
@@ -14,6 +14,12 @@ export default class Cliente extends BaseModel {
   declare nome: string
 
   @column()
+  declare email: string
+
+  @column()
+  declare telefone: string
+
+  @column()
   declare cpf: string
 
   @column()
@@ -24,12 +30,11 @@ export default class Cliente extends BaseModel {
 
   @column()
   declare endereco: string
-  
-  @column()
-  declare tecnicoId: number
 
-  @belongsTo(() => Tecnico)
-  declare tecnico: BelongsTo<typeof Tecnico>
+  @manyToMany(() => Tecnico, {
+    pivotTable: 'tecnico_cliente',
+  })
+  declare tecnicos: ManyToMany<typeof Tecnico>
 
   @hasMany(() => Amostra)
   declare amostras: HasMany<typeof Amostra>
