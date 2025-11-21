@@ -21,13 +21,6 @@ export default class extends BaseSchema {
       table.string('cep', 20).notNullable()
       table.string('endereco', 255).notNullable()
 
-      table
-        .integer('tecnico_id')
-        .unsigned()
-        .references('tecnicos.id')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE')
-
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
@@ -61,18 +54,26 @@ export default class extends BaseSchema {
       table.timestamp('updated_at')
     })
 
-    this.schema.createTable('planilhas', (table) => {
+    this.schema.createTable('processos', (table) => {
       table.increments('id')
-      table.string('arquivo', 255).notNullable()
+      table.string('nome', 255).notNullable()
+      table.decimal('preco', 12, 2).notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
 
-    this.schema.createTable('processos', (table) => {
+    this.schema.createTable('orcamentos', (table) => {
       table.increments('id')
-      table.string('nome', 255).notNullable()
-      table.decimal('preco', 12, 2).notNullable()
+      table.string('identificacao', 100).notNullable().unique()
+      table.enum('status', ['PENDENTE', 'APROVADO', 'RECUSADO']).notNullable().defaultTo('PENDENTE')
+
+      table
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
@@ -99,9 +100,9 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
 
       table
-        .integer('processo_id')
+        .integer('orcamento_id')
         .unsigned()
-        .references('processos.id')
+        .references('orcamentos.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
 
@@ -130,29 +131,6 @@ export default class extends BaseSchema {
       table.timestamp('updated_at')
     })
 
-    this.schema.createTable('orcamentos', (table) => {
-      table.increments('id')
-      table.string('identificacao', 100).notNullable().unique()
-      table.enum('status', ['PENDENTE', 'APROVADO', 'RECUSADO']).notNullable().defaultTo('PENDENTE')
-
-      table
-        .integer('cliente_id')
-        .unsigned()
-        .references('clientes.id')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE')
-
-      table
-        .integer('amostra_id')
-        .unsigned()
-        .references('amostras.id')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE')
-
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
-    })
-
     this.schema.createTable('laudos', (table) => {
       table.increments('id')
 
@@ -160,13 +138,6 @@ export default class extends BaseSchema {
         .integer('cliente_id')
         .unsigned()
         .references('clientes.id')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE')
-
-      table
-        .integer('planilha_id')
-        .unsigned()
-        .references('planilhas.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
 
@@ -180,16 +151,33 @@ export default class extends BaseSchema {
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
+
+    this.schema.createTable('planilhas', (table) => {
+      table.increments('id')
+      table.string('arquivo', 255).notNullable()
+      
+      table
+        .integer('laudo_id')
+        .unsigned()
+        .references('laudos.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table.timestamp('created_at')
+      table.timestamp('updated_at')
+    })
   }
 
   async down() {
-    this.schema.dropTable('tecnicos')
-    this.schema.dropTable('clientes')
-    this.schema.dropTable('tipo_amostras')
     this.schema.dropTable('planilhas')
-    this.schema.dropTable('processos')
+    this.schema.dropTable('laudos')
+    this.schema.dropTable('amostra_processos')
     this.schema.dropTable('amostras')
     this.schema.dropTable('orcamentos')
-    this.schema.dropTable('laudos')
+    this.schema.dropTable('processos')
+    this.schema.dropTable('tipo_amostras')
+    this.schema.dropTable('tecnico_cliente')
+    this.schema.dropTable('clientes')
+    this.schema.dropTable('tecnicos')
   }
 }
