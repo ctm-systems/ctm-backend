@@ -18,15 +18,15 @@ export default class Amostra extends BaseModel {
 
   @column()
   declare dataRecebimento: DateTime
-  
+
   @column()
   declare clienteId: number
-  
+
   @column()
   declare tipoAmostraId: number
 
   @column()
-  declare orcamentoId: number
+  declare orcamentoId?: number
 
   @manyToMany(() => Processo, {
     pivotTable: 'amostra_processos',

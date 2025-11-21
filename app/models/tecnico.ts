@@ -13,9 +13,6 @@ export default class Tecnico extends BaseModel {
   @column()
   declare matricula: string
 
-  @column()
-  declare senha: string
-
   @manyToMany(() => Cliente, {
     pivotTable: 'tecnico_cliente',
   })

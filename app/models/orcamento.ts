@@ -6,10 +6,10 @@ import Amostra from './amostra.js'
 import Laudo from './laudo.js'
 
 export enum Status {
-    PENDENTE = 'PENDENTE',
-    APROVADO = 'APROVADO',
-    RECUSADO = 'RECUSADO',
-  }
+  PENDENTE = 'PENDENTE',
+  APROVADO = 'APROVADO',
+  RECUSADO = 'RECUSADO',
+}
 
 export default class Orcamento extends BaseModel {
   @column({ isPrimary: true })
