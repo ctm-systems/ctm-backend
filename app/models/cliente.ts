@@ -20,10 +20,10 @@ export default class Cliente extends BaseModel {
   declare telefone: string
 
   @column()
-  declare cpf: string
+  declare cpf?: string
 
   @column()
-  declare cnpj: string
+  declare cnpj?: string
 
   @column()
   declare cep: string

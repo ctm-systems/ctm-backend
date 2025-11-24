@@ -14,7 +14,7 @@ export default class Amostra extends BaseModel {
   declare nome: string
 
   @column()
-  declare foto: string
+  declare foto?: string
 
   @column()
   declare dataRecebimento: DateTime
