@@ -10,6 +10,9 @@ export default class Planilha extends BaseModel {
   @column()
   declare arquivo: string
 
+  @column()
+  declare laudoId: number
+
   @belongsTo(() => Laudo)
   declare laudo: BelongsTo<typeof Laudo>
 
