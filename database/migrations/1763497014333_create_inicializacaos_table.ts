@@ -48,7 +48,10 @@ export default class extends BaseSchema {
 
     this.schema.createTable('tipo_amostras', (table) => {
       table.increments('id')
-      table.string('nome', 255).notNullable()
+      table
+        .enum('nome', ['MINERIO', 'SEDIMENTO', 'TESTEMUNHO', 'SOLO', 'REJEITO', 'POLPA'])
+        .notNullable()
+        .unique()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
@@ -155,7 +158,7 @@ export default class extends BaseSchema {
     this.schema.createTable('planilhas', (table) => {
       table.increments('id')
       table.string('arquivo', 255).notNullable()
-      
+
       table
         .integer('laudo_id')
         .unsigned()
