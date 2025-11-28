@@ -2,13 +2,13 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Amostra from '#models/amostra'
 
 export default class AmostrasController {
-  async index({}: HttpContext) {
+  async index({ response }: HttpContext) {
     const amostras = await Amostra.query()
       .preload('cliente')
       .preload('tipoAmostra')
       .preload('orcamento')
       .preload('processos')
-    return amostras
+    return response.ok(amostras)
   }
 
   async show({ params }: HttpContext) {
@@ -21,7 +21,7 @@ export default class AmostrasController {
       .firstOrFail()
   }
 
-  async store({ request }: HttpContext) {
+  async store({ request, response }: HttpContext) {
     const data = request.only([
       'nome',
       'foto',
@@ -31,7 +31,7 @@ export default class AmostrasController {
       'orcamentoId',
     ])
     const amostra = await Amostra.create(data)
-    return amostra
+    return response.created(amostra)
   }
 
   async update({ params, request, response }: HttpContext) {
@@ -50,9 +50,9 @@ export default class AmostrasController {
     return response.ok(amostra)
   }
 
-  async destroy({ params }: HttpContext) {
+  async destroy({ response, params }: HttpContext) {
     const amostra = await Amostra.findOrFail(params.id)
     await amostra.delete()
-    return { message: 'Amostra deletada com sucesso' }
+    return response.ok({ message: 'Amostra deletada com sucesso' })
   }
 }

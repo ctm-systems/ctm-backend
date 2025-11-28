@@ -4,42 +4,39 @@ import Orcamento from '#models/orcamento'
 export default class OrcamentosController {
   async index({ response }: HttpContext) {
     const orcamentos = await Orcamento.query()
+      .preload('amostras')
+      .preload('cliente')
+      .preload('laudos')
     return response.ok(orcamentos)
   }
 
-  async show({ params, response }: HttpContext) {
-    try {
-      const orcamento = await Orcamento.findOrFail(params.id)
-      return response.ok(orcamento)
-    } catch (error) {
-      return response.status(404).json({ message: 'Orçamento não encontrado' })
-    }
+  async show({ params }: HttpContext) {
+    return await Orcamento.query()
+      .where('id', params.id)
+      .preload('amostras')
+      .preload('cliente')
+      .preload('laudos')
+      .firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
-    const data = request.only(['cliente_id', 'valor', 'descricao', 'status'])
+    const data = request.only(['identificacao', 'status', 'clienteId'])
     const orcamento = await Orcamento.create(data)
     return response.created(orcamento)
   }
 
   async update({ params, request, response }: HttpContext) {
-    try {
-      const orcamento = await Orcamento.findOrFail(params.id)
-      orcamento.merge(request.only(['cliente_id', 'valor', 'descricao', 'status']))
-      await orcamento.save()
-      return response.ok(orcamento)
-    } catch {
-      return response.notFound({ message: 'Orçamento não encontrado' })
-    }
+    const orcamento = await Orcamento.findOrFail(params.id)
+    const data = request.only(['identificacao', 'status', 'clienteId'])
+    orcamento.merge(data)
+    await orcamento.save()
+
+    return response.ok(orcamento)
   }
 
   async destroy({ params, response }: HttpContext) {
-    try {
-      const orcamento = await Orcamento.findOrFail(params.id)
-      await orcamento.delete()
-      return response.json({ message: 'Orçamento deletado com sucesso' })
-    } catch {
-      return response.status(404).json({ message: 'Orçamento não encontrado' })
-    }
+    const orcamento = await Orcamento.findOrFail(params.id)
+    await orcamento.delete()
+    return response.ok({ message: 'Orçamento deletado com sucesso' })
   }
 }

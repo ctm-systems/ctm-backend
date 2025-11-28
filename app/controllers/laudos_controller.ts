@@ -3,17 +3,17 @@ import Laudo from '#models/laudo'
 
 export default class LaudosController {
   async index({ response }: HttpContext) {
-    const laudos = await Laudo.query()
+    const laudos = await Laudo.query().preload('cliente').preload('orcamento').preload('planilhas')
     return response.ok(laudos)
   }
 
-  async show({ params, response }: HttpContext) {
-    try {
-      const laudo = await Laudo.findOrFail(params.id)
-      return response.ok(laudo)
-    } catch (error) {
-      return response.status(404).json({ message: 'Laudo não encontrado' })
-    }
+  async show({ params }: HttpContext) {
+    return await Laudo.query()
+      .where('id', params.id)
+      .preload('cliente')
+      .preload('orcamento')
+      .preload('planilhas')
+      .firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
@@ -23,23 +23,17 @@ export default class LaudosController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    try {
-      const laudo = await Laudo.findOrFail(params.id)
-      laudo.merge(request.only(['clienteId', 'orcamentoId']))
-      await laudo.save()
-      return response.ok(laudo)
-    } catch {
-      return response.status(404).json({ message: 'Laudo não encontrado' })
-    }
+    const laudo = await Laudo.findOrFail(params.id)
+    const data = request.only(['clienteId', 'orcamentoId'])
+    laudo.merge(data)
+    await laudo.save()
+
+    return response.ok(laudo)
   }
 
   async destroy({ params, response }: HttpContext) {
-    try {
-      const laudo = await Laudo.findOrFail(params.id)
-      await laudo.delete()
-      return response.json({ message: 'Laudo deletado com sucesso' })
-    } catch {
-      return response.status(404).json({ message: 'Laudo não encontrado' })
-    }
+    const laudo = await Laudo.findOrFail(params.id)
+    await laudo.delete()
+    return response.ok({ message: 'Laudo deletado com sucesso' })
   }
 }

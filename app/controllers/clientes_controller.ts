@@ -4,16 +4,21 @@ import Cliente from '#models/cliente'
 export default class ClientesController {
   async index({ response }: HttpContext) {
     const clientes = await Cliente.query()
+      .preload('amostras')
+      .preload('laudos')
+      .preload('orcamentos')
+      .preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
     return response.ok(clientes)
   }
 
-  async show({ params, response }: HttpContext) {
-    try {
-      const cliente = await Cliente.findOrFail(params.id)
-      return response.ok(cliente)
-    } catch {
-      return response.status(404).json({ message: 'Cliente não encontrado' })
-    }
+  async show({ params }: HttpContext) {
+    return await Cliente.query()
+      .where('id', params.id)
+      .preload('amostras')
+      .preload('laudos')
+      .preload('orcamentos')
+      .preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
+      .firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
@@ -23,23 +28,17 @@ export default class ClientesController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    try {
-      const cliente = await Cliente.findOrFail(params.id)
-      cliente.merge(request.only(['nome', 'email', 'telefone', 'cpf', 'cnpj', 'cep', 'endereco']))
-      await cliente.save()
-      return response.ok(cliente)
-    } catch {
-      return response.notFound({ message: 'Cliente não encontrado' })
-    }
+    const cliente = await Cliente.findOrFail(params.id)
+    const data = request.only(['nome', 'email', 'telefone', 'cpf', 'cnpj', 'cep', 'endereco'])
+    cliente.merge(data)
+    await cliente.save()
+
+    return response.ok(cliente)
   }
 
   async destroy({ params, response }: HttpContext) {
-    try {
-      const cliente = await Cliente.findOrFail(params.id)
-      await cliente.delete()
-      return response.noContent()
-    } catch {
-      return response.notFound({ message: 'Cliente não encontrado' })
-    }
+    const cliente = await Cliente.findOrFail(params.id)
+    await cliente.delete()
+    return response.ok({ message: 'Cliente deletado com sucesso' })
   }
 }

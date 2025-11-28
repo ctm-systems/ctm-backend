@@ -3,17 +3,12 @@ import Planilha from '#models/planilha'
 
 export default class PlanilhasController {
   async index({ response }: HttpContext) {
-    const planilhas = await Planilha.query()
-    return response.json(planilhas)
+    const planilhas = await Planilha.query().preload('laudo')
+    return response.ok(planilhas)
   }
 
-  async show({ params, response }: HttpContext) {
-    try {
-      const planilha = await Planilha.findOrFail(params.id)
-      return response.ok(planilha)
-    } catch (error) {
-      return response.status(404).json({ message: 'Planilha não encontrada' })
-    }
+  async show({ params }: HttpContext) {
+    return await Planilha.query().where('id', params.id).preload('laudo').firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
@@ -23,23 +18,17 @@ export default class PlanilhasController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    try {
-      const planilha = await Planilha.findOrFail(params.id)
-      planilha.merge(request.only(['arquivo', 'laudoId']))
-      await planilha.save()
-      return response.ok(planilha)
-    } catch {
-      return response.status(404).json({ message: 'Planilha não encontrada' })
-    }
+    const planilha = await Planilha.findOrFail(params.id)
+    const data = request.only(['arquivo', 'laudoId'])
+    planilha.merge(data)
+    await planilha.save()
+
+    return response.ok(planilha)
   }
 
   async destroy({ params, response }: HttpContext) {
-    try {
-      const planilha = await Planilha.findOrFail(params.id)
-      await planilha.delete()
-      return response.json({ message: 'Planilha deletada com sucesso' })
-    } catch {
-      return response.status(404).json({ message: 'Planilha não encontrada' })
-    }
+    const planilha = await Planilha.findOrFail(params.id)
+    await planilha.delete()
+    return response.ok({ message: 'Planilha deletada com sucesso' })
   }
 }
