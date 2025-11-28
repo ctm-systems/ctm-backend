@@ -16,7 +16,7 @@ export default class Tecnico extends BaseModel {
   @manyToMany(() => Cliente, {
     pivotTable: 'tecnico_cliente',
   })
-  declare cliente: ManyToMany<typeof Cliente>
+  declare clientes: ManyToMany<typeof Cliente>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
