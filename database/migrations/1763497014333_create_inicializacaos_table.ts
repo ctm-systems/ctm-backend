@@ -52,6 +52,7 @@ export default class extends BaseSchema {
         .enum('nome', ['MINERIO', 'SEDIMENTO', 'TESTEMUNHO', 'SOLO', 'REJEITO', 'POLPA'])
         .notNullable()
         .unique()
+        .defaultTo('MINERIO')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
