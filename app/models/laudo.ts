@@ -5,7 +5,6 @@ import Orcamento from './orcamento.js'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Planilha from './planilha.js'
 
-
 export default class Laudo extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
