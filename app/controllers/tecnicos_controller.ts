@@ -2,10 +2,16 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Tecnico from '#models/tecnico'
 
 export default class TecnicosController {
-  async index({ response }: HttpContext) {
-    const tecnicos = await Tecnico.query().preload('clientes', (query) =>
-      query.pivotColumns(['clienteId'])
-    )
+  async index({ request, response }: HttpContext) {
+    const carregarClientes = request.input('carregarClientes', false)
+
+    const tecnicosQuery = Tecnico.query()
+
+    if (carregarClientes) {
+      tecnicosQuery.preload('clientes', (query) => query.pivotColumns(['cliente_id']))
+    }
+
+    const tecnicos = await tecnicosQuery
     return response.ok(tecnicos)
   }
 
@@ -15,11 +21,16 @@ export default class TecnicosController {
     return response.created(tecnico)
   }
 
-  async show({ params }: HttpContext) {
-    return await Tecnico.query()
-      .where('id', params.id)
-      .preload('clientes', (query) => query.pivotColumns(['clienteId']))
-      .firstOrFail()
+  async show({ request, params }: HttpContext) {
+    const carregarClientes = request.input('carregarClientes', false)
+
+    const tecnicoQuery = Tecnico.query().where('id', params.id)
+
+    if (carregarClientes) {
+      tecnicoQuery.preload('clientes', (query) => query.pivotColumns(['cliente_id']))
+    }
+
+    return await tecnicoQuery.firstOrFail()
   }
 
   async update({ params, request, response }: HttpContext) {

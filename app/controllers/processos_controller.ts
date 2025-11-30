@@ -2,16 +2,29 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Processo from '#models/processo'
 
 export default class ProcessosController {
-  async index({ response }: HttpContext) {
-    const processos = await Processo.query().preload('amostras')
+  async index({ request, response }: HttpContext) {
+    const carregarAmostras = request.input('carregarAmostras', false)
+
+    const processosQuery = Processo.query()
+
+    if (carregarAmostras) {
+      processosQuery.preload('amostras', (query) => query.pivotColumns(['amostra_id']))
+    }
+
+    const processos = await processosQuery
     return response.ok(processos)
   }
 
-  async show({ params }: HttpContext) {
-    return await Processo.query()
-      .where('id', params.id)
-      .preload('amostras', (query) => query.pivotColumns(['amostraId']))
-      .firstOrFail()
+  async show({ request, params }: HttpContext) {
+    const carregarAmostras = request.input('carregarAmostras', false)
+
+    const processoQuery = Processo.query().where('id', params.id)
+
+    if (carregarAmostras) {
+      processoQuery.preload('amostras', (query) => query.pivotColumns(['amostra_id']))
+    }
+
+    return await processoQuery.firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
