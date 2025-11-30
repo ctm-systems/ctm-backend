@@ -2,23 +2,38 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Cliente from '#models/cliente'
 
 export default class ClientesController {
-  async index({ response }: HttpContext) {
-    const clientes = await Cliente.query()
+  async index({ request, response }: HttpContext) {
+    const carregarTecnicos = request.input('carregarTecnicos', false)
+
+    const clientesQuery = Cliente.query()
       .preload('amostras')
       .preload('laudos')
       .preload('orcamentos')
-      .preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
+
+    if (carregarTecnicos) {
+      clientesQuery.preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
+    }
+
+    const clientes = await clientesQuery
     return response.ok(clientes)
   }
 
-  async show({ params }: HttpContext) {
-    return await Cliente.query()
+  async show({ params, request }: HttpContext) {
+    const carregarTecnicos = request.input('carregarTecnicos', false)
+
+    const clienteQuery = Cliente.query()
       .where('id', params.id)
       .preload('amostras')
       .preload('laudos')
       .preload('orcamentos')
-      .preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
-      .firstOrFail()
+
+    if (carregarTecnicos) {
+      clienteQuery.preload('tecnicos', (query) => {
+        query.pivotColumns(['tecnico_id'])
+      })
+    }
+
+    return await clienteQuery.firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
