@@ -11,7 +11,7 @@ export default class ClientesController {
       .preload('orcamentos')
 
     if (carregarTecnicos) {
-      clientesQuery.preload('tecnicos', (query) => query.pivotColumns(['tecnicoId']))
+      clientesQuery.preload('tecnicos', (query) => query.pivotColumns(['tecnico_id']))
     }
 
     const clientes = await clientesQuery
