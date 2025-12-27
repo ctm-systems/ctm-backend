@@ -25,22 +25,21 @@ export default class Amostra extends BaseModel {
   @column()
   declare tipoAmostraId: number
 
-  @column()
-  declare orcamentoId?: number
-
   @manyToMany(() => Processo, {
     pivotTable: 'amostra_processos',
   })
   declare processos: ManyToMany<typeof Processo>
+
+  @manyToMany(() => Orcamento, {
+    pivotTable: 'amostra_orcamentos',
+  })
+  declare orcamentos: ManyToMany<typeof Orcamento>
 
   @belongsTo(() => Cliente)
   declare cliente: BelongsTo<typeof Cliente>
 
   @belongsTo(() => TipoAmostra)
   declare tipoAmostra: BelongsTo<typeof TipoAmostra>
-
-  @belongsTo(() => Orcamento)
-  declare orcamento: BelongsTo<typeof Orcamento>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -5,14 +5,11 @@ export default class AmostrasController {
   async index({ request, response }: HttpContext) {
     const carregarProcessos = request.input('carregarProcessos', false)
 
-    const amostrasQuery = Amostra.query()
-      .preload('cliente')
-      .preload('tipoAmostra')
-      .preload('orcamento')
+    const amostrasQuery = Amostra.query().preload('cliente').preload('tipoAmostra')
 
     if (carregarProcessos) {
       amostrasQuery.preload('processos', (query) => {
-        query.pivotColumns(['processo_id'])
+        query.pivotColumns(['processo_id', 'orcamento_id'])
       })
     }
 
@@ -27,11 +24,10 @@ export default class AmostrasController {
       .where('id', params.id)
       .preload('cliente')
       .preload('tipoAmostra')
-      .preload('orcamento')
 
     if (carregarProcessos) {
       amostraQuery.preload('processos', (query) => {
-        query.pivotColumns(['processo_id'])
+        query.pivotColumns(['processo_id', 'orcamento_id'])
       })
     }
 
@@ -39,28 +35,14 @@ export default class AmostrasController {
   }
 
   async store({ request, response }: HttpContext) {
-    const data = request.only([
-      'nome',
-      'foto',
-      'dataRecebimento',
-      'clienteId',
-      'tipoAmostraId',
-      'orcamentoId',
-    ])
+    const data = request.only(['nome', 'foto', 'dataRecebimento', 'clienteId', 'tipoAmostraId'])
     const amostra = await Amostra.create(data)
     return response.created(amostra)
   }
 
   async update({ params, request, response }: HttpContext) {
     const amostra = await Amostra.findOrFail(params.id)
-    const data = request.only([
-      'nome',
-      'foto',
-      'dataRecebimento',
-      'clienteId',
-      'tipoAmostraId',
-      'orcamentoId',
-    ])
+    const data = request.only(['nome', 'foto', 'dataRecebimento', 'clienteId', 'tipoAmostraId'])
     amostra.merge(data)
     await amostra.save()
 

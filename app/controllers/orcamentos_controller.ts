@@ -2,21 +2,36 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Orcamento from '#models/orcamento'
 
 export default class OrcamentosController {
-  async index({ response }: HttpContext) {
-    const orcamentos = await Orcamento.query()
-      .preload('amostras')
-      .preload('cliente')
-      .preload('laudos')
+  async index({ request, response }: HttpContext) {
+    const carregarAmostras = request.input('carregarAmostras', false)
+
+    const orcamentoQuery = Orcamento.query().preload('cliente').preload('laudos')
+
+    if (carregarAmostras) {
+      orcamentoQuery.preload('amostras', (query) => {
+        query.pivotColumns(['orcamento_id'])
+      })
+    }
+
+    const orcamentos = await orcamentoQuery
     return response.ok(orcamentos)
   }
 
-  async show({ params }: HttpContext) {
-    return await Orcamento.query()
+  async show({ request, params }: HttpContext) {
+    const carregarAmostras = request.input('carregarAmostras', false)
+
+    const orcamentoQuery = Orcamento.query()
       .where('id', params.id)
-      .preload('amostras')
       .preload('cliente')
       .preload('laudos')
-      .firstOrFail()
+
+    if (carregarAmostras) {
+      orcamentoQuery.preload('amostras', (query) => {
+        query.pivotColumns(['orcamento_id'])
+      })
+    }
+
+    return await orcamentoQuery.firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {

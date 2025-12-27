@@ -14,6 +14,7 @@ const TiposAmostrasController = () => import('#controllers/tipos_amostras_contro
 
 const AmostrasProcessosController = () => import('#controllers/amostras_processos_controller')
 const TecnicosClientesController = () => import('#controllers/tecnicos_clientes_controller')
+const OrcamentosAmostrasController = () => import('#controllers/orcamentos_amostras_controller')
 
 router.get('/', async () => {
   return {
@@ -42,5 +43,8 @@ router
 
     router.post('/amostras/:id/adicionar-processo', [AmostrasProcessosController, 'attach'])
     router.post('/amostras/:id/remover-processo', [AmostrasProcessosController, 'detach'])
+
+    router.post('/orcamentos/:id/adicionar-amostra', [OrcamentosAmostrasController, 'attach'])
+    router.post('/orcamentos/:id/remover-amostra', [OrcamentosAmostrasController, 'detach'])
   })
   .use([middleware.authSuap()])
