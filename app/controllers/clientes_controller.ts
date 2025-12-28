@@ -9,6 +9,7 @@ export default class ClientesController {
       .preload('amostras')
       .preload('laudos')
       .preload('orcamentos')
+      .preload('planilhas')
 
     if (carregarTecnicos) {
       clientesQuery.preload('tecnicos', (query) => query.pivotColumns(['tecnico_id']))
@@ -26,6 +27,7 @@ export default class ClientesController {
       .preload('amostras')
       .preload('laudos')
       .preload('orcamentos')
+      .preload('planilhas')
 
     if (carregarTecnicos) {
       clienteQuery.preload('tecnicos', (query) => {

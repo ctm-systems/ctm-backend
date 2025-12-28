@@ -181,6 +181,20 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
 
+      table
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table
+        .integer('amostra_id')
+        .unsigned()
+        .references('amostras.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

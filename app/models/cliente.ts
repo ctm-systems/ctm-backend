@@ -5,6 +5,7 @@ import Tecnico from './tecnico.js'
 import Amostra from './amostra.js'
 import Orcamento from './orcamento.js'
 import Laudo from './laudo.js'
+import Planilha from './planilha.js'
 
 export default class Cliente extends BaseModel {
   @column({ isPrimary: true })
@@ -44,6 +45,9 @@ export default class Cliente extends BaseModel {
 
   @hasMany(() => Laudo)
   declare laudos: HasMany<typeof Laudo>
+
+  @hasMany(() => Planilha)
+  declare planilhas: HasMany<typeof Planilha>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
