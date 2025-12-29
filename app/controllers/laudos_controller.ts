@@ -2,18 +2,33 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Laudo from '#models/laudo'
 
 export default class LaudosController {
-  async index({ response }: HttpContext) {
-    const laudos = await Laudo.query().preload('cliente').preload('orcamento').preload('planilhas')
+  async index({ request, response }: HttpContext) {
+    const carregarPlanilhas = request.input('carregarPlanilhas', false)
+
+    const laudoQuery = Laudo.query().preload('cliente').preload('orcamento')
+
+    if (carregarPlanilhas) {
+      laudoQuery.preload('planilhas', (query) => {
+        query.pivotColumns(['planilha_id'])
+      })
+    }
+
+    const laudos = await laudoQuery
     return response.ok(laudos)
   }
 
-  async show({ params }: HttpContext) {
-    return await Laudo.query()
-      .where('id', params.id)
-      .preload('cliente')
-      .preload('orcamento')
-      .preload('planilhas')
-      .firstOrFail()
+  async show({ request, params }: HttpContext) {
+    const carregarPlanilhas = request.input('carregarPlanilhas', false)
+
+    const laudoQuery = Laudo.query().where('id', params.id).preload('cliente').preload('orcamento')
+
+    if (carregarPlanilhas) {
+      laudoQuery.preload('planilhas', (query) => {
+        query.pivotColumns(['planilha_id'])
+      })
+    }
+
+    return await laudoQuery.firstOrFail()
   }
 
   async store({ request, response }: HttpContext) {
