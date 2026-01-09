@@ -5,7 +5,10 @@ export default class AmostrasController {
   async index({ request, response }: HttpContext) {
     const carregarProcessos = request.input('carregarProcessos', false)
 
-    const amostrasQuery = Amostra.query().preload('cliente').preload('tipoAmostra')
+    const amostrasQuery = Amostra.query()
+      .preload('cliente')
+      .preload('tipoAmostra')
+      .preload('planilhas')
 
     if (carregarProcessos) {
       amostrasQuery
@@ -28,6 +31,7 @@ export default class AmostrasController {
       .where('id', params.id)
       .preload('cliente')
       .preload('tipoAmostra')
+      .preload('planilhas')
 
     if (carregarProcessos) {
       amostraQuery

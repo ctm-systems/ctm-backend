@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Cliente from './cliente.js'
 import TipoAmostra from './tipo_amostra.js'
 import Orcamento from './orcamento.js'
 import Processo from './processo.js'
+import Planilha from './planilha.js'
 
 export default class Amostra extends BaseModel {
   @column({ isPrimary: true })
@@ -40,6 +41,9 @@ export default class Amostra extends BaseModel {
 
   @belongsTo(() => TipoAmostra)
   declare tipoAmostra: BelongsTo<typeof TipoAmostra>
+
+  @hasMany(() => Planilha)
+  declare planilhas: HasMany<typeof Planilha>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

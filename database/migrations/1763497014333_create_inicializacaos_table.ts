@@ -172,7 +172,36 @@ export default class extends BaseSchema {
 
     this.schema.createTable('planilhas', (table) => {
       table.increments('id')
+      table.string('identificacao', 255).notNullable()
       table.string('arquivo', 255).notNullable()
+
+      table
+        .integer('cliente_id')
+        .unsigned()
+        .references('clientes.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table
+        .integer('amostra_id')
+        .unsigned()
+        .references('amostras.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+
+      table.timestamp('created_at')
+      table.timestamp('updated_at')
+    })
+
+    this.schema.createTable('laudos_planilhas', (table) => {
+      table.increments('id')
+
+      table
+        .integer('planilha_id')
+        .unsigned()
+        .references('planilhas.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
 
       table
         .integer('laudo_id')
@@ -187,8 +216,10 @@ export default class extends BaseSchema {
   }
 
   async down() {
+    this.schema.dropTable('laudos_planilhas')
     this.schema.dropTable('planilhas')
     this.schema.dropTable('laudos')
+    this.schema.dropTable('amostra_orcamentos')
     this.schema.dropTable('amostra_processos')
     this.schema.dropTable('amostras')
     this.schema.dropTable('orcamentos')
