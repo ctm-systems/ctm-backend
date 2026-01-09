@@ -14,8 +14,8 @@ export default class Amostra extends BaseModel {
   @column()
   declare nome: string
 
-  @column()
-  declare foto?: string
+  @column({ serializeAs: 'foto' })
+  declare foto: string | null
 
   @column()
   declare dataRecebimento: DateTime
