@@ -1,5 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Amostra from '#models/amostra'
+import app from '@adonisjs/core/services/app'
+import { cuid } from '@adonisjs/core/helpers'
 
 export default class AmostrasController {
   async index({ request, response }: HttpContext) {
@@ -47,17 +49,60 @@ export default class AmostrasController {
   }
 
   async store({ request, response }: HttpContext) {
-    const data = request.only(['nome', 'foto', 'dataRecebimento', 'clienteId', 'tipoAmostraId'])
-    const amostra = await Amostra.create(data)
+    const foto = request.file('foto', {
+      extnames: ['jpg', 'jpeg', 'png'],
+      size: '5mb',
+    })
+
+    let fotoPath: string | null = null
+
+    if (foto) {
+      const fileName = `${cuid()}.${foto.extname}`
+
+      await foto.move(app.publicPath('uploads'), {
+        name: fileName,
+      })
+
+      fotoPath = `/uploads/${fileName}`
+    }
+
+    const amostra = await Amostra.create({
+      nome: request.input('nome'),
+      dataRecebimento: request.input('dataRecebimento'),
+      clienteId: request.input('clienteId'),
+      tipoAmostraId: request.input('tipoAmostraId'),
+      foto: fotoPath,
+    })
+
     return response.created(amostra)
   }
 
   async update({ params, request, response }: HttpContext) {
     const amostra = await Amostra.findOrFail(params.id)
-    const data = request.only(['nome', 'foto', 'dataRecebimento', 'clienteId', 'tipoAmostraId'])
-    amostra.merge(data)
-    await amostra.save()
 
+    const foto = request.file('foto', {
+      extnames: ['jpg', 'jpeg', 'png'],
+      size: '5mb',
+    })
+
+    if (foto) {
+      const fileName = `${cuid()}.${foto.extname}`
+
+      await foto.move(app.publicPath('uploads'), {
+        name: fileName,
+      })
+
+      amostra.foto = `/uploads/${fileName}`
+    }
+
+    amostra.merge({
+      nome: request.input('nome'),
+      dataRecebimento: request.input('dataRecebimento'),
+      clienteId: request.input('clienteId'),
+      tipoAmostraId: request.input('tipoAmostraId'),
+    })
+
+    await amostra.save()
     return response.ok(amostra)
   }
 

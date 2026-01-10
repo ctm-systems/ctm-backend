@@ -70,7 +70,7 @@ export default class extends BaseSchema {
     this.schema.createTable('amostras', (table) => {
       table.increments('id')
       table.string('nome', 255).notNullable()
-      table.string('foto', 255)
+      table.string('foto', 255).nullable()
       table.datetime('data_recebimento').notNullable()
 
       table
