@@ -39,7 +39,6 @@ export default class PlanilhasController {
       return response.badRequest({ message: 'Arquivo não enviado' })
     }
 
-    // 📂 Salva temporariamente
     await arquivo.move(app.tmpPath('uploads'))
 
     if (!arquivo.filePath) {
@@ -48,18 +47,16 @@ export default class PlanilhasController {
       })
     }
 
-    // ⚙️ Processa a planilha
     const excelService = new ExcelService()
     const { fileName, outputPath } = await excelService.processAndSave(arquivo.filePath, 17)
 
-    // 🧹 Remove arquivo bruto
     fs.unlinkSync(arquivo.filePath)
 
     const data = request.only(['identificacao', 'amostraId', 'clienteId'])
 
     const planilha = await Planilha.create({
       ...data,
-      arquivo: fileName, // ✅ só o nome
+      arquivo: fileName,
     })
 
     return response.created(planilha)
@@ -79,7 +76,6 @@ export default class PlanilhasController {
   async destroy({ params, response }: HttpContext) {
     const planilha = await Planilha.findOrFail(params.id)
 
-    // 🧹 Remove arquivo físico
     const filePath = app.makePath('storage/planilhas', planilha.arquivo)
 
     if (fs.existsSync(filePath)) {
@@ -89,5 +85,19 @@ export default class PlanilhasController {
     await planilha.delete()
 
     return response.ok({ message: 'Planilha deletada com sucesso' })
+  }
+
+  async download({ params, response }: HttpContext) {
+    const planilha = await Planilha.findOrFail(params.id)
+
+    const filePath = app.makePath('storage/planilhas', planilha.arquivo)
+
+    if (!fs.existsSync(filePath)) {
+      return response.notFound({
+        message: 'Arquivo da planilha não encontrado',
+      })
+    }
+
+    return response.download(filePath, true)
   }
 }
