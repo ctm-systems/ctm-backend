@@ -35,6 +35,7 @@ router
     router.resource('/laudos', LaudosController).except(['create', 'edit'])
     router.resource('/orcamentos', OrcamentosController).except(['create', 'edit'])
     router.resource('/planilhas', PlanilhasController).except(['create', 'edit'])
+    router.get('/planilhas/:id/download', [PlanilhasController, 'download'])
     router.resource('/processos', ProcessosController).except(['create', 'edit'])
     router.resource('/tecnicos', TecnicosController).except(['create', 'edit'])
     router.resource('/tipos-amostras', TiposAmostrasController).except(['create', 'edit'])
