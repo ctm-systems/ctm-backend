@@ -1,7 +1,6 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import XLSX from 'xlsx'
+import { supabase } from '#start/supabase'
 
 export class ExcelService {
   async processAndSave(inputPath: string, headerLine: number = 17) {
@@ -48,15 +47,21 @@ export class ExcelService {
     const newWorkbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(newWorkbook, worksheet, 'Tabela')
 
+    const fileBuffer = XLSX.write(newWorkbook, { type: 'buffer', bookType: 'xlsx' })
     const fileName = `${randomUUID()}.xlsx`
-    const outputPath = path.resolve('storage/planilhas', fileName)
 
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true })
-    XLSX.writeFile(newWorkbook, outputPath)
+    const { data: uploadData, error } = await supabase.storage
+      .from('planilhas')
+      .upload(fileName, fileBuffer, {
+        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        upsert: false,
+      })
+
+    if (error) throw error
 
     return {
       fileName,
-      outputPath,
+      path: uploadData.path,
     }
   }
 
