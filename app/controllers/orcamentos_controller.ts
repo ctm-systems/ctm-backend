@@ -5,7 +5,7 @@ export default class OrcamentosController {
   async index({ request, response }: HttpContext) {
     const carregarAmostras = request.input('carregarAmostras', false)
 
-    const orcamentoQuery = Orcamento.query().preload('cliente').preload('laudos')
+    const orcamentoQuery = Orcamento.query().preload('cliente')
 
     if (carregarAmostras) {
       orcamentoQuery.preload('amostras', (query) => {
@@ -23,7 +23,6 @@ export default class OrcamentosController {
     const orcamentoQuery = Orcamento.query()
       .where('id', params.id)
       .preload('cliente')
-      .preload('laudos')
 
     if (carregarAmostras) {
       orcamentoQuery.preload('amostras', (query) => {
