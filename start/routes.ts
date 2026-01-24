@@ -5,7 +5,6 @@ const AuthSuapController = () => import('#controllers/auth_suaps_controller')
 
 const AmostraController = () => import('#controllers/amostras_controller')
 const ClientesController = () => import('#controllers/clientes_controller')
-const LaudosController = () => import('#controllers/laudos_controller')
 const OrcamentosController = () => import('#controllers/orcamentos_controller')
 const PlanilhasController = () => import('#controllers/planilhas_controller')
 const ProcessosController = () => import('#controllers/processos_controller')
@@ -15,7 +14,6 @@ const TiposAmostrasController = () => import('#controllers/tipos_amostras_contro
 const AmostrasProcessosController = () => import('#controllers/amostras_processos_controller')
 const TecnicosClientesController = () => import('#controllers/tecnicos_clientes_controller')
 const OrcamentosAmostrasController = () => import('#controllers/orcamentos_amostras_controller')
-const LaudosPlanilhasController = () => import('#controllers/laudos_planilhas_controller')
 
 router.get('/', async () => {
   return {
@@ -32,7 +30,6 @@ router
 
     router.resource('/amostras', AmostraController).except(['create', 'edit'])
     router.resource('/clientes', ClientesController).except(['create', 'edit'])
-    router.resource('/laudos', LaudosController).except(['create', 'edit'])
     router.resource('/orcamentos', OrcamentosController).except(['create', 'edit'])
     router.resource('/planilhas', PlanilhasController).except(['create', 'edit'])
     router.get('/planilhas/:id/download', [PlanilhasController, 'download'])
@@ -49,7 +46,5 @@ router
     router.post('/orcamentos/:id/adicionar-amostra', [OrcamentosAmostrasController, 'attach'])
     router.post('/orcamentos/:id/remover-amostra', [OrcamentosAmostrasController, 'detach'])
 
-    router.post('/laudos/:id/adicionar-planilha', [LaudosPlanilhasController, 'attach'])
-    router.post('/laudos/:id/remover-planilha', [LaudosPlanilhasController, 'detach'])
   })
   .use([middleware.authSuap()])

@@ -3,29 +3,16 @@ import Planilha from '#models/planilha'
 import { ExcelService } from '#services/excel_service'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
+import { supabase } from '#start/supabase'
 
 export default class PlanilhasController {
-  async index({ request, response }: HttpContext) {
-    const carregarLaudos = request.input('carregarLaudos', false)
-
+  async index({ response }: HttpContext) {
     const query = Planilha.query().preload('cliente').preload('amostra')
-
-    if (carregarLaudos) {
-      query.preload('laudos', (q) => q.pivotColumns(['laudo_id']))
-    }
-
     return response.ok(await query)
   }
 
-  async show({ request, params }: HttpContext) {
-    const carregarLaudos = request.input('carregarLaudos', false)
-
+  async show({ params }: HttpContext) {
     const query = Planilha.query().where('id', params.id).preload('cliente').preload('amostra')
-
-    if (carregarLaudos) {
-      query.preload('laudos', (q) => q.pivotColumns(['laudo_id']))
-    }
-
     return query.firstOrFail()
   }
 
@@ -76,28 +63,35 @@ export default class PlanilhasController {
   async destroy({ params, response }: HttpContext) {
     const planilha = await Planilha.findOrFail(params.id)
 
-    const filePath = app.makePath('storage/planilhas', planilha.arquivo)
-
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath)
-    }
+    await supabase.storage.from('planilhas').remove([planilha.arquivo])
 
     await planilha.delete()
-
     return response.ok({ message: 'Planilha deletada com sucesso' })
   }
 
   async download({ params, response }: HttpContext) {
     const planilha = await Planilha.findOrFail(params.id)
 
-    const filePath = app.makePath('storage/planilhas', planilha.arquivo)
+    const { data, error } = await supabase.storage
+      .from('planilhas')
+      .createSignedUrl(planilha.arquivo, 60)
 
-    if (!fs.existsSync(filePath)) {
-      return response.notFound({
-        message: 'Arquivo da planilha não encontrado',
-      })
+    if (error || !data?.signedUrl) {
+      return response.notFound({ message: 'Arquivo não encontrado' })
     }
 
-    return response.download(filePath, true)
+    const fileResponse = await fetch(data.signedUrl)
+
+    response.header(
+      'Content-Type',
+      fileResponse.headers.get('content-type') ?? 'application/octet-stream'
+    )
+
+    response.header(
+      'Content-Disposition',
+      `attachment; filename="${planilha.identificacao ?? 'arquivo.xlsx'}"`
+    )
+
+    response.send(Buffer.from(await fileResponse.arrayBuffer()))
   }
 }
