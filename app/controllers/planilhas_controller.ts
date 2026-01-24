@@ -48,7 +48,7 @@ export default class PlanilhasController {
     }
 
     const excelService = new ExcelService()
-    const { fileName, outputPath } = await excelService.processAndSave(arquivo.filePath, 17)
+    const { fileName } = await excelService.processAndSave(arquivo.filePath, 17)
 
     fs.unlinkSync(arquivo.filePath)
 
