@@ -76,8 +76,22 @@ export default class PlanilhasController {
       .from('planilhas')
       .createSignedUrl(planilha.arquivo, 60)
 
-    if (error) return response.notFound({ message: 'Arquivo não encontrado' })
+    if (error || !data?.signedUrl) {
+      return response.notFound({ message: 'Arquivo não encontrado' })
+    }
 
-    return response.redirect(data.signedUrl)
+    const fileResponse = await fetch(data.signedUrl)
+
+    response.header(
+      'Content-Type',
+      fileResponse.headers.get('content-type') ?? 'application/octet-stream'
+    )
+
+    response.header(
+      'Content-Disposition',
+      `attachment; filename="${planilha.identificacao ?? 'arquivo.xlsx'}"`
+    )
+
+    response.send(Buffer.from(await fileResponse.arrayBuffer()))
   }
 }
