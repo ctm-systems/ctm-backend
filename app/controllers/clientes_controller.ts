@@ -7,7 +7,6 @@ export default class ClientesController {
 
     const clientesQuery = Cliente.query()
       .preload('amostras')
-      .preload('laudos')
       .preload('orcamentos')
       .preload('planilhas')
 
@@ -25,7 +24,6 @@ export default class ClientesController {
     const clienteQuery = Cliente.query()
       .where('id', params.id)
       .preload('amostras')
-      .preload('laudos')
       .preload('orcamentos')
       .preload('planilhas')
 

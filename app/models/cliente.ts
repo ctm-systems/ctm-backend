@@ -4,7 +4,6 @@ import type { ManyToMany, HasMany } from '@adonisjs/lucid/types/relations'
 import Tecnico from './tecnico.js'
 import Amostra from './amostra.js'
 import Orcamento from './orcamento.js'
-import Laudo from './laudo.js'
 import Planilha from './planilha.js'
 
 export default class Cliente extends BaseModel {
@@ -42,9 +41,6 @@ export default class Cliente extends BaseModel {
 
   @hasMany(() => Orcamento)
   declare orcamentos: HasMany<typeof Orcamento>
-
-  @hasMany(() => Laudo)
-  declare laudos: HasMany<typeof Laudo>
 
   @hasMany(() => Planilha)
   declare planilhas: HasMany<typeof Planilha>

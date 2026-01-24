@@ -5,27 +5,15 @@ import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
 
 export default class PlanilhasController {
-  async index({ request, response }: HttpContext) {
-    const carregarLaudos = request.input('carregarLaudos', false)
+  async index({ response }: HttpContext) {
 
     const query = Planilha.query().preload('cliente').preload('amostra')
-
-    if (carregarLaudos) {
-      query.preload('laudos', (q) => q.pivotColumns(['laudo_id']))
-    }
-
     return response.ok(await query)
   }
 
-  async show({ request, params }: HttpContext) {
-    const carregarLaudos = request.input('carregarLaudos', false)
+  async show({ params }: HttpContext) {
 
     const query = Planilha.query().where('id', params.id).preload('cliente').preload('amostra')
-
-    if (carregarLaudos) {
-      query.preload('laudos', (q) => q.pivotColumns(['laudo_id']))
-    }
-
     return query.firstOrFail()
   }
 
