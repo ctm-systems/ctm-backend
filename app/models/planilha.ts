@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
-import Laudo from './laudo.js'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Amostra from './amostra.js'
 import Cliente from './cliente.js'
 
@@ -20,11 +19,6 @@ export default class Planilha extends BaseModel {
 
   @column()
   declare clienteId: number
-
-  @manyToMany(() => Laudo, {
-    pivotTable: 'laudos_planilhas',
-  })
-  declare laudos: ManyToMany<typeof Laudo>
 
   @belongsTo(() => Amostra)
   declare amostra: BelongsTo<typeof Amostra>
