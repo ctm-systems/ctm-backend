@@ -1,40 +1,49 @@
 import axios from 'axios'
+import env from '#start/env'
 
 export class SuapService {
-  private static baseUrl = 'https://suap.ifrn.edu.br/api'
+  private static baseUrl = 'https://suap.ifrn.edu.br/o/token/'
+  private static clientId = env.get('SUAP_CLIENT_ID')
+  private static clientSecret = env.get('SUAP_CLIENT_SECRET')
+  private static redirectUri = env.get('SUAP_REDIRECT_URI')
 
-  async login(username: string, password: string) {
+  async getAccessToken(code: string) {
     try {
-      const response = await axios.post(`${SuapService.baseUrl}/token/pair`, {
-        username,
-        password,
+      const params = new URLSearchParams()
+      params.append('grant_type', 'authorization_code')
+      params.append('code', code)
+      params.append('redirect_uri', SuapService.redirectUri!)
+      params.append('client_id', SuapService.clientId!)
+      params.append('client_secret', SuapService.clientSecret!)
+
+      const response = await axios.post(SuapService.baseUrl, params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       })
-      return response.data.access
+
+      return response.data.access_token
     } catch (error) {
-      throw new Error('O login falhou. Verifique suas credenciais e tente novamente.')
+      if (error.response) {
+        console.error('Suap Service: Motivo real do SUAP:', error.response.data)
+      } else {
+        console.error('Suap Service: Erro de conexão ou configuração:', error.message)
+      }
+      throw error
     }
   }
 
-  async getData(token: string) {
+  static async validateToken(token: string): Promise<boolean> {
     try {
-      const response = await axios.get(`${SuapService.baseUrl}/eu/`, {
+      console.log('Suap Service: Token no Cookie:', token)
+      await axios.get(env.get('SUAP_DATA')!, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-      return response.data
+      return true
     } catch (error) {
-      throw new Error('Falha ao obter os dados. Faça login e tente novamente.')
-    }
-  }
-
-  static async validateToken(token: string) {
-    try {
-      const response = await axios.post(`${SuapService.baseUrl}/token/verify`, {
-        token,
-      })
-      return response.status === 200
-    } catch (error) {
+      console.error('Suap Service: SUAP rejeitou Token:', error.response?.data)
       return false
     }
   }

@@ -21,7 +21,8 @@ router.get('/', async () => {
   }
 })
 
-router.post('/login', [AuthSuapController, 'login']).use([middleware.checkAuthorizedUser()])
+router.get('/auth/url', [AuthSuapController, 'getAuthUrl'])
+router.post('/auth/callback', [AuthSuapController, 'callback'])
 
 router
   .group(() => {
@@ -45,6 +46,5 @@ router
 
     router.post('/orcamentos/:id/adicionar-amostra', [OrcamentosAmostrasController, 'attach'])
     router.post('/orcamentos/:id/remover-amostra', [OrcamentosAmostrasController, 'detach'])
-
   })
   .use([middleware.authSuap()])
