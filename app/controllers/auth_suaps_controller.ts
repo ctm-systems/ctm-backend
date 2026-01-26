@@ -1,40 +1,53 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { SuapService } from '#services/suap_service'
+import axios from 'axios'
+import env from '#start/env'
 
 export default class AuthSuapsController {
-  async login({ request, response }: HttpContext) {
-    const { username, password } = request.only(['username', 'password'])
-
-    const suap = new SuapService()
+  async getData({ request, response }: HttpContext) {
+    const token = request.cookie('suap_token')
+    if (!token) return response.unauthorized()
 
     try {
-      const token = await suap.login(username, password)
-
-      response.cookie('suap_token', token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 3600000,
-        path: '/',
+      const res = await axios.get(env.get('SUAP_DATA')!, {
+        headers: { Authorization: `Bearer ${token}` },
       })
-
-      return response.ok({ message: 'Login realizado com sucesso' })
-    } catch (error) {
-      return response.badRequest({ message: 'Credenciais inválidas' })
+      return response.ok(res.data)
+    } catch {
+      return response.unauthorized()
     }
   }
 
-  async getData({ request, response }: HttpContext) {
-    const token = request.cookie('suap_token')
+  async getAuthUrl({ response }: HttpContext) {
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: env.get('SUAP_CLIENT_ID')!,
+      redirect_uri: env.get('SUAP_REDIRECT_URI')!,
+      scope: 'identificacao',
+    })
 
+    const url = `https://suap.ifrn.edu.br/o/authorize/?${params.toString()}`
+    return response.ok({ url })
+  }
+
+  async callback({ request, response }: HttpContext) {
+    const code = request.input('code')
     const suap = new SuapService()
 
     try {
-      const userData = await suap.getData(token)
-      return response.ok(userData)
+      const token = await suap.getAccessToken(code)
+
+      response.cookie('suap_token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      })
+
+      return response.ok({ message: 'Autenticado via OAuth' })
     } catch (error) {
-      response.clearCookie('suap_token', { path: '/' })
-      return response.unauthorized({ message: 'Token inválido ou expirado' })
+      console.error('Controller Auth Suap: Erro no Callback:', error)
+      return response.badRequest({ message: 'Falha na autorização' })
     }
   }
 
