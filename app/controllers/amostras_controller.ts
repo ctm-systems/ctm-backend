@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Amostra from '#models/amostra'
 import app from '@adonisjs/core/services/app'
 import { cuid } from '@adonisjs/core/helpers'
+import { SupabaseService } from '#services/supabase_service'
 
 export default class AmostrasController {
   async index({ request, response }: HttpContext) {
@@ -57,13 +58,15 @@ export default class AmostrasController {
     let fotoPath: string | null = null
 
     if (foto) {
-      const fileName = `${cuid()}.${foto.extname}`
+      await foto.move(app.tmpPath('uploads'))
 
-      await foto.move(app.publicPath('uploads'), {
-        name: fileName,
-      })
+      if (!foto.filePath) {
+        return response.internalServerError({
+          message: 'Erro ao processar imagem',
+        })
+      }
 
-      fotoPath = `/uploads/${fileName}`
+      fotoPath = await SupabaseService.uploadPublicImage(foto.filePath, foto.extname!)
     }
 
     const amostra = await Amostra.create({
