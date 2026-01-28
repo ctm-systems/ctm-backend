@@ -42,4 +42,5 @@ router.use([() => import('@adonisjs/core/bodyparser_middleware')])
 export const middleware = router.named({
   authSuap: () => import('#middleware/auth_suap_middleware'),
   checkAuthorizedUser: () => import('#middleware/check_authorized_user_middleware'),
+  role: () => import('#middleware/role_middleware'),
 })
