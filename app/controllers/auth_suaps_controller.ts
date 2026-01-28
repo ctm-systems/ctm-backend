@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { SuapService } from '#services/suap_service'
 import axios from 'axios'
 import env from '#start/env'
+import Tecnico from '#models/tecnico'
 
 export default class AuthSuapsController {
   async getData({ request, response }: HttpContext) {
@@ -12,7 +13,21 @@ export default class AuthSuapsController {
       const res = await axios.get(env.get('SUAP_DATA')!, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      return response.ok(res.data)
+
+      const tecnicoLocal = await Tecnico.query()
+        .where('matricula', res.data.identificacao)
+        .preload('roles')
+        .first()
+
+      if (!tecnicoLocal) {
+        response.clearCookie('suap_token', { path: '/' })
+        return response.forbidden({ message: 'Usuário não autorizado no sistema local.' })
+      }
+
+      return response.ok({
+        ...res.data,
+        roles: tecnicoLocal.serialize().roles,
+      })
     } catch {
       return response.unauthorized()
     }
@@ -36,6 +51,18 @@ export default class AuthSuapsController {
 
     try {
       const token = await suap.getAccessToken(code)
+
+      const res = await axios.get(env.get('SUAP_DATA')!, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      const tecnicoLocal = await Tecnico.findBy('matricula', res.data.identificacao)
+
+      if (!tecnicoLocal) {
+        return response.forbidden({
+          message: 'Sua matrícula não está cadastrada. Solicite acesso ao administrador.',
+        })
+      }
 
       response.cookie('suap_token', token, {
         httpOnly: true,
