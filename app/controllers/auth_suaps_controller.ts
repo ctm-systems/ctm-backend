@@ -19,9 +19,14 @@ export default class AuthSuapsController {
         .preload('roles')
         .first()
 
+      if (!tecnicoLocal) {
+        response.clearCookie('suap_token', { path: '/' })
+        return response.forbidden({ message: 'Usuário não autorizado no sistema local.' })
+      }
+
       return response.ok({
         ...res.data,
-        roles: tecnicoLocal?.serialize().roles || [],
+        roles: tecnicoLocal.serialize().roles,
       })
     } catch {
       return response.unauthorized()
@@ -46,6 +51,18 @@ export default class AuthSuapsController {
 
     try {
       const token = await suap.getAccessToken(code)
+
+      const res = await axios.get(env.get('SUAP_DATA')!, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      const tecnicoLocal = await Tecnico.findBy('matricula', res.data.identificacao)
+
+      if (!tecnicoLocal) {
+        return response.forbidden({
+          message: 'Sua matrícula não está cadastrada. Solicite acesso ao administrador.',
+        })
+      }
 
       response.cookie('suap_token', token, {
         httpOnly: true,
