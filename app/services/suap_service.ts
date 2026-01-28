@@ -47,4 +47,15 @@ export class SuapService {
       return false
     }
   }
+
+  static async getUserData(token: string) {
+    try {
+      const response = await axios.get(env.get('SUAP_DATA')!, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      return response.data
+    } catch (error) {
+      return null
+    }
+  }
 }

@@ -3,7 +3,7 @@ import Processo from '#models/processo'
 
 export default class extends BaseSeeder {
   async run() {
-    await Processo.createMany([
+    const processos = [
       {
         nome: 'FRX',
         preco: 100,
@@ -28,6 +28,10 @@ export default class extends BaseSeeder {
         nome: 'Pulverização',
         preco: 16.16,
       },
-    ])
+    ]
+
+    for (const item of processos) {
+      await Processo.updateOrCreate({ nome: item.nome }, { preco: item.preco })
+    }
   }
 }

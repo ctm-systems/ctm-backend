@@ -34,8 +34,8 @@ router
     router.resource('/orcamentos', OrcamentosController).except(['create', 'edit'])
     router.resource('/planilhas', PlanilhasController).except(['create', 'edit'])
     router.get('/planilhas/:id/download', [PlanilhasController, 'download'])
-    router.resource('/processos', ProcessosController).except(['create', 'edit'])
-    router.resource('/tecnicos', TecnicosController).except(['create', 'edit'])
+    router.resource('/processos', ProcessosController).only(['index', 'show'])
+    router.resource('/tecnicos', TecnicosController).only(['index', 'show'])
     router.resource('/tipos-amostras', TiposAmostrasController).except(['create', 'edit'])
 
     router.post('/clientes/:id/adicionar-tecnico', [TecnicosClientesController, 'attach'])
@@ -46,5 +46,12 @@ router
 
     router.post('/orcamentos/:id/adicionar-amostra', [OrcamentosAmostrasController, 'attach'])
     router.post('/orcamentos/:id/remover-amostra', [OrcamentosAmostrasController, 'detach'])
+
+    router
+      .group(() => {
+        router.resource('/tecnicos', TecnicosController).except(['index', 'show'])
+        router.resource('/processos', ProcessosController).except(['index', 'show'])
+      })
+      .use([middleware.role(['diretor'])])
   })
   .use([middleware.authSuap()])
