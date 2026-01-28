@@ -4,25 +4,17 @@ import { TipoAmostraNome } from '#models/tipo_amostra'
 
 export default class extends BaseSeeder {
   async run() {
-    await TipoAmostra.createMany([
-      {
-        nome: TipoAmostraNome.MINERIO,
-      },
-      {
-        nome: TipoAmostraNome.POLPA,
-      },
-      {
-        nome: TipoAmostraNome.REJEITO,
-      },
-      {
-        nome: TipoAmostraNome.SEDIMENTO,
-      },
-      {
-        nome: TipoAmostraNome.SOLO,
-      },
-      {
-        nome: TipoAmostraNome.TESTEMUNHO,
-      },
-    ])
+    const tipos = [
+      { nome: TipoAmostraNome.MINERIO },
+      { nome: TipoAmostraNome.POLPA },
+      { nome: TipoAmostraNome.REJEITO },
+      { nome: TipoAmostraNome.SEDIMENTO },
+      { nome: TipoAmostraNome.SOLO },
+      { nome: TipoAmostraNome.TESTEMUNHO },
+    ]
+
+    for (const item of tipos) {
+      await TipoAmostra.updateOrCreate({ nome: item.nome }, { nome: item.nome })
+    }
   }
 }
