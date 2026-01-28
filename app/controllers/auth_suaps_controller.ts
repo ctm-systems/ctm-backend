@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { SuapService } from '#services/suap_service'
 import axios from 'axios'
 import env from '#start/env'
+import Tecnico from '#models/tecnico'
 
 export default class AuthSuapsController {
   async getData({ request, response }: HttpContext) {
@@ -12,7 +13,16 @@ export default class AuthSuapsController {
       const res = await axios.get(env.get('SUAP_DATA')!, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      return response.ok(res.data)
+
+      const tecnicoLocal = await Tecnico.query()
+        .where('matricula', res.data.identificacao)
+        .preload('roles')
+        .first()
+
+      return response.ok({
+        ...res.data,
+        roles: tecnicoLocal?.serialize().roles || [],
+      })
     } catch {
       return response.unauthorized()
     }
