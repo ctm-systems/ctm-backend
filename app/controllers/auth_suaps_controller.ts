@@ -66,7 +66,7 @@ export default class AuthSuapsController {
 
       response.cookie('suap_token', token, {
         httpOnly: true,
-        secure: false, // Ajuste para true em produção com HTTPS
+        secure: true,
         sameSite: 'lax',
         path: '/',
       })
