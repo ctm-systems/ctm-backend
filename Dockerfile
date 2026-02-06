@@ -1,14 +1,13 @@
 FROM node:20-alpine
 
-WORKDIR /app
+RUN apk add --no-cache bash postgresql-client
 
-COPY package*.json ./
-RUN npm ci
+WORKDIR /app
 
 COPY . .
 
-RUN node ace build
+RUN chmod +x /app/docker-entrypoint.sh || true
 
 EXPOSE 3333
 
-CMD ["node", "build/bin/server.js"]
+CMD ["/app/docker-entrypoint.sh"]
