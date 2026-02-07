@@ -11,6 +11,7 @@
 - [Instruções de inicialização da aplicação](#instruções-de-inicialização-da-aplicação)
 - [Mecanismo de autenticação](#mecanismo-de-autenticação)
 - [Regras de autorização](#regras-de-autorização)
+- [Exemplos de Requisições (Insomnia)](#exemplos-de-requisições-insomnia)
 
 ## Descrição
 
@@ -145,9 +146,9 @@ O sistema implementa controle de acesso baseado em funções (RBAC - Role-Based 
 
 ---
 
-## 🔐 Autenticação via SUAP (Insomnia)
+## Exemplos de Requisições (Insomnia)
 
-### 1️⃣ Gerar URL de autenticação
+### Gerar URL de autenticação
 
 * Método: **GET**
 * URL:
@@ -156,7 +157,7 @@ O sistema implementa controle de acesso baseado em funções (RBAC - Role-Based 
 http://localhost:3333/auth/url
 ```
 
-📌 A resposta retornará uma URL.
+A resposta retornará uma URL.
 
 * Copie a URL retornada
 * Abra no navegador
@@ -167,7 +168,7 @@ http://localhost:3333/auth/url
 
 ---
 
-### 2️⃣ Obter o código de autenticação
+### Obter o código de autenticação
 
 Após o login, você será redirecionado para uma URL semelhante a:
 
@@ -179,7 +180,7 @@ http://localhost:5173/callback?code=XXX
 
 ---
 
-### 3️⃣ Validar o código e gerar token
+### Validar o código e gerar token
 
 * Método: **GET**
 * URL:
@@ -205,7 +206,7 @@ http://localhost:3333/auth/callback
 
 ---
 
-### 4️⃣ Configurar cookie manualmente no Insomnia
+### Configurar cookie manualmente no Insomnia
 
 Em **Manage Cookies**, adicione:
 
@@ -218,9 +219,9 @@ Isso garantirá que as próximas requisições estejam autenticadas.
 
 ---
 
-## 🧪 Testes de Permissão (Usuário logado como Diretor)
+## Testes de Permissão (Usuário logado como Diretor)
 
-### 🔍 Listar técnicos
+### Listar técnicos
 
 * Método: **GET**
 * URL:
@@ -233,7 +234,7 @@ http://localhost:3333/tecnicos
 
 ---
 
-### ❌ Deletar técnico (permitido para diretor)
+### Deletar técnico (permitido para diretor)
 
 * Método: **DELETE**
 * URL:
@@ -242,11 +243,11 @@ http://localhost:3333/tecnicos
 http://localhost:3333/tecnicos/ID
 ```
 
-📌 O diretor possui permissão para deletar técnicos.
+O diretor possui permissão para deletar técnicos.
 
 ---
 
-### ✏️ Atualizar técnico (alterar papel)
+### Atualizar técnico (alterar papel)
 
 * Método: **PUT**
 * URL:
@@ -267,7 +268,7 @@ http://localhost:3333/tecnicos/SEU_ID
 
 ---
 
-### 🚫 Teste de restrição de permissão
+### Teste de restrição de permissão
 
 Após alterar seu próprio papel para `tecnico`:
 
@@ -277,7 +278,7 @@ Após alterar seu próprio papel para `tecnico`:
 DELETE http://localhost:3333/tecnicos/ID
 ```
 
-📌 Resultado esperado:
+Resultado esperado:
 
 * Acesso **negado**, comprovando o funcionamento do controle de permissões (RBAC).
 
