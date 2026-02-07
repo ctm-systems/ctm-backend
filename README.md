@@ -11,7 +11,8 @@
 - [Instruções de inicialização da aplicação](#instruções-de-inicialização-da-aplicação)
 - [Mecanismo de autenticação](#mecanismo-de-autenticação)
 - [Regras de autorização](#regras-de-autorização)
-- [Exemplos de Requisições (Insomnia)](#exemplos-de-requisições-insomnia)
+- [Configuração de credenciais de acesso](#configuração-de-credenciais-de-acesso)
+- [Exemplos de requisições (Insomnia)](#exemplos-de-requisições-insomnia)
 
 ## Descrição
 
@@ -143,6 +144,109 @@ O sistema implementa controle de acesso baseado em funções (RBAC - Role-Based 
 
 - `AuthSuapMiddleware` - Valida autenticação OAuth2
 - `RoleMiddleware` - Verifica permissões baseadas em roles
+
+## Configuração de Credenciais de Acesso
+
+### Credenciais para Desenvolvimento e Testes
+
+Para testar o sistema, você precisa de credenciais válidas do SUAP (Sistema Unificado de Administração Pública) do IFRN.
+
+### 1. Credenciais de Teste do SUAP
+
+**Para Ambiente de Desenvolvimento:**
+- **Credenciais:** Use suas credenciais institucionais do IFRN (matrícula e senha)
+- **Tipos de usuário aceitos:**
+  - Servidores técnico-administrativos
+  - Professores
+  - Estudantes (com matrícula válida)
+
+### 2. Configuração OAuth2 no SUAP
+
+Antes de usar o sistema, é necessário registrar a aplicação no SUAP:
+
+1. **Acesse:** https://suap.ifrn.edu.br/o/applications/
+2. **Crie uma nova aplicação** com as seguintes configurações:
+   - **Client type:** `Confidential`
+   - **Authorization grant type:** `Authorization code`
+   - **Redirect URI:** `http://localhost:5173/callback` (caso tenha uma aplicação front-end ou deseje pegar o *code* na URL do navegador)
+   - **Name:** Nome da sua aplicação (ex: "CTM Backend")
+
+3. **Anote as credenciais geradas:**
+   - `Client ID`
+   - `Client Secret`
+
+### 3. Configuração das Variáveis de Ambiente
+
+Configure as credenciais no arquivo `.env`:
+
+```bash
+# OAuth2 SUAP
+SUAP_CLIENT_ID=seu_client_id_aqui
+SUAP_CLIENT_SECRET=seu_client_secret_aqui
+SUAP_REDIRECT_URI=http://localhost:5173/callback # Caso tenha uma aplicação front-end
+```
+
+### 4. Usuários de Teste Pré-configurados
+
+O sistema vem com usuários de teste configurados nos seeders:
+
+**Diretores (Acesso Completo):**
+- **Matrícula:** `1886551`
+- **Nome:** `Keylly`
+- **Roles:** `diretor`
+
+- **Matrícula:** `20241038060006`
+- **Nome:** `Jardson`
+- **Roles:** `diretor`
+
+- **Matrícula:** `20241038060011`
+- **Nome:** `Ian`
+- **Roles:** `diretor`
+
+**Técnico (Acesso Limitado):**
+- **Matrícula:** `20241038060010`
+- **Nome:** `Robério`
+- **Roles:** `tecnico`
+
+### 5. Fluxo de Teste Completo
+
+1. **Configure as variáveis de ambiente** com suas credenciais OAuth2
+2. **Execute o comando para rodar o Docker:**
+```
+docker compose up --build
+```
+4. **Acesse:** GET `http://localhost:3333/auth/url` (para pegar a URL de autenticação) 
+5. **Faça login com suas credenciais do SUAP**
+6. **Na URL da tela de callback:** `http://localhost:5173/callback` (pegue o *code* que está na URL)
+7. **Na URL de callback da API:** POST `http://localhost:3333/auth/url` (passe o *code* como payload)
+```
+{
+  "code": "coloque_aqui_o_code"
+}
+```
+8. **Verifique se sua matrícula está cadastrada** no sistema local
+
+### 6. Solução de Problemas Comuns
+
+**Erro 403 após login:**
+- Verifique se sua matrícula está cadastrada na tabela `tecnicos`
+- Adicione sua matrícula via seeder
+
+**Erro de OAuth2:**
+- Verifique se as credenciais `SUAP_CLIENT_ID` e `SUAP_CLIENT_SECRET` estão corretas
+- Confirme se a `SUAP_REDIRECT_URI` está registrada no SUAP
+
+**Token inválido:**
+- Limpe os cookies do navegador
+- Refaça o processo de login
+
+### 7. Credenciais para Produção
+
+**Para ambiente de produção:**
+- Registre uma nova aplicação OAuth2 no SUAP com a URL de produção
+- Use variáveis de ambiente seguras
+- Configure HTTPS obrigatório
+- Atualize a `SUAP_REDIRECT_URI` para o domínio de produção
 
 ## Exemplos de Requisições (Insomnia)
 
