@@ -74,8 +74,8 @@ http://localhost:3333
 - **POST /auth/callback** - Processa callback de autenticação do SUAP
 
 #### Autenticados (requer token SUAP)
-- **GET /auth/data** - Retorna dados do usuário autenticado
-- **GET /auth/logout** - Encerra sessão e remove token
+- **GET /data** - Retorna dados do usuário autenticado
+- **GET /logout** - Encerra sessão e remove token
 
 ### Endpoints CRUD Principais (Autenticado no sistema)
 
