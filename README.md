@@ -14,6 +14,8 @@
 - [Regras de autorização](#regras-de-autorização)
 - [Configuração de credenciais de acesso](#configuração-de-credenciais-de-acesso)
 - [Exemplos de requisições (Insomnia)](#exemplos-de-requisições-insomnia)
+- [Contribuindo](#contribuindo)
+- [Autores](#autores)
 
 ## Descrição
 
@@ -500,3 +502,13 @@ DELETE http://localhost:3333/tecnicos/ID
 Resultado esperado:
 
 * Acesso **negado**, comprovando o funcionamento do controle de permissões (RBAC).
+
+## Contribuindo
+1. Faça um fork do projeto;
+2. Crie uma branch (`git checkout -b minha-feature`);
+3. Commit suas mudanças (`git commit -m 'Adiciona minha feature'`);
+4. Envie para o repositório (`git push origin minha-feature`);
+5. Abra um Pull Request.
+
+## Autores
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/137799663?s=48&v=4" width=115><br><sub>Ian Galvão</sub>](https://github.com/Barr0ca) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/138258644?v=4" width=115><br><sub>Jardson Alan</sub>](https://github.com/jardsonalan) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/204107954?v=4" width=115><br><sub>Robério Júnior</sub>](https://github.com/roberio-junior) |
