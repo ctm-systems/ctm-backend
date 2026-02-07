@@ -511,4 +511,4 @@ Resultado esperado:
 5. Abra um Pull Request.
 
 ## Autores
-| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/137799663?s=48&v=4" width=115><br><sub>Ian Galvão</sub>](https://github.com/Barr0ca) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/138258644?v=4" width=115><br><sub>Jardson Alan</sub>](https://github.com/jardsonalan) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/204107954?v=4" width=115><br><sub>Robério Júnior</sub>](https://github.com/roberio-junior) |
+[<img loading="lazy" src="https://avatars.githubusercontent.com/u/137799663?s=48&v=4" width=115>](https://github.com/Barr0ca) [<img loading="lazy" src="https://avatars.githubusercontent.com/u/138258644?v=4" width=115>](https://github.com/jardsonalan) [<img loading="lazy" src="https://avatars.githubusercontent.com/u/204107954?v=4" width=115>](https://github.com/roberio-junior)
