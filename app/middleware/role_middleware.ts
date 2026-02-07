@@ -2,9 +2,10 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { SuapService } from '#services/suap_service'
 import Tecnico from '#models/tecnico'
+import { Roles } from '#models/role'
 
 export default class RoleMiddleware {
-  async handle(ctx: HttpContext, next: NextFn, requiredRoles: string[]) {
+  async handle(ctx: HttpContext, next: NextFn, requiredRoles: Roles[]) {
     const token = ctx.request.cookie('suap_token')
 
     if (!token) {

@@ -1,5 +1,6 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+import { Roles } from '#models/role'
 
 const AuthSuapController = () => import('#controllers/auth_suaps_controller')
 
@@ -52,6 +53,6 @@ router
         router.resource('/tecnicos', TecnicosController).except(['index', 'show'])
         router.resource('/processos', ProcessosController).except(['index', 'show'])
       })
-      .use([middleware.role(['diretor'])])
+      .use([middleware.role([Roles.diretor])])
   })
   .use([middleware.authSuap()])

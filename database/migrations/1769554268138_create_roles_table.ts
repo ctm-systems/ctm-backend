@@ -4,7 +4,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable('roles', (table) => {
       table.increments('id')
-      table.string('nome').notNullable().unique()
+      table.enum('nome', ['diretor', 'tecnico']).notNullable().unique()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
