@@ -142,3 +142,142 @@ O sistema implementa controle de acesso baseado em funções (RBAC - Role-Based 
 
 - `AuthSuapMiddleware` - Valida autenticação OAuth2
 - `RoleMiddleware` - Verifica permissões baseadas em roles
+
+---
+
+## 🔐 Autenticação via SUAP (Insomnia)
+
+### 1️⃣ Gerar URL de autenticação
+
+* Método: **GET**
+* URL:
+
+```
+http://localhost:3333/auth/url
+```
+
+📌 A resposta retornará uma URL.
+
+* Copie a URL retornada
+* Abra no navegador
+* Faça login com:
+
+  * Matrícula: `1886551`
+  * Senha: do SUAP
+
+---
+
+### 2️⃣ Obter o código de autenticação
+
+Após o login, você será redirecionado para uma URL semelhante a:
+
+```
+http://localhost:5173/callback?code=XXX
+```
+
+* Copie o valor do parâmetro `code`
+
+---
+
+### 3️⃣ Validar o código e gerar token
+
+* Método: **GET**
+* URL:
+
+```
+http://localhost:3333/auth/callback
+```
+
+* Body (JSON):
+
+```json
+{
+  "code": "SEU_CODIGO"
+}
+```
+
+📌 Após a requisição:
+
+* Vá até a aba **Cookies** no Insomnia
+* Copie o valor do cookie:
+
+  * **Key**: `suap_token`
+
+---
+
+### 4️⃣ Configurar cookie manualmente no Insomnia
+
+Em **Manage Cookies**, adicione:
+
+* **Key**: `suap_token`
+* **Value**: `SEU_TOKEN`
+* **Path**: `/`
+* **Domain**: `localhost`
+
+Isso garantirá que as próximas requisições estejam autenticadas.
+
+---
+
+## 🧪 Testes de Permissão (Usuário logado como Diretor)
+
+### 🔍 Listar técnicos
+
+* Método: **GET**
+* URL:
+
+```
+http://localhost:3333/tecnicos
+```
+
+* Escolha o `ID` de algum técnico retornado
+
+---
+
+### ❌ Deletar técnico (permitido para diretor)
+
+* Método: **DELETE**
+* URL:
+
+```
+http://localhost:3333/tecnicos/ID
+```
+
+📌 O diretor possui permissão para deletar técnicos.
+
+---
+
+### ✏️ Atualizar técnico (alterar papel)
+
+* Método: **PUT**
+* URL:
+
+```
+http://localhost:3333/tecnicos/SEU_ID
+```
+
+* Body (JSON):
+
+```json
+{
+  "nome": "Keylly",
+  "matricula": "1886551",
+  "role_nome": "tecnico"
+}
+```
+
+---
+
+### 🚫 Teste de restrição de permissão
+
+Após alterar seu próprio papel para `tecnico`:
+
+* Tente executar novamente:
+
+```
+DELETE http://localhost:3333/tecnicos/ID
+```
+
+📌 Resultado esperado:
+
+* Acesso **negado**, comprovando o funcionamento do controle de permissões (RBAC).
+
