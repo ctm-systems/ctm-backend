@@ -182,6 +182,8 @@ http://localhost:5173/callback?code=XXX
 
 ### Validar o código e gerar token
 
+Caso o código expire realize os passos anteriores para obter um novo código
+
 * Método: **GET**
 * URL:
 
