@@ -144,8 +144,6 @@ O sistema implementa controle de acesso baseado em funções (RBAC - Role-Based 
 - `AuthSuapMiddleware` - Valida autenticação OAuth2
 - `RoleMiddleware` - Verifica permissões baseadas em roles
 
----
-
 ## Exemplos de Requisições (Insomnia)
 
 ### Gerar URL de autenticação
@@ -163,10 +161,8 @@ A resposta retornará uma URL.
 * Abra no navegador
 * Faça login com:
 
-  * Matrícula: `1886551`
-  * Senha: do SUAP
-
----
+  * Matrícula: [Sua matrícula]
+  * Senha: [Senha do SUAP]
 
 ### Obter o código de autenticação
 
@@ -176,9 +172,9 @@ Após o login, você será redirecionado para uma URL semelhante a:
 http://localhost:5173/callback?code=XXX
 ```
 
-* Copie o valor do parâmetro `code`
+<img src="./assets/callback.png"></img>
 
----
+* Copie o valor do parâmetro `code`
 
 ### Validar o código e gerar token
 
@@ -191,7 +187,7 @@ Caso o código expire realize os passos anteriores para obter um novo código
 http://localhost:3333/auth/callback
 ```
 
-* Body (JSON):
+* Payload - Body (JSON):
 
 ```json
 {
@@ -206,8 +202,6 @@ http://localhost:3333/auth/callback
 
   * **Key**: `suap_token`
 
----
-
 ### Configurar cookie manualmente no Insomnia
 
 Em **Manage Cookies**, adicione:
@@ -218,8 +212,6 @@ Em **Manage Cookies**, adicione:
 * **Domain**: `localhost`
 
 Isso garantirá que as próximas requisições estejam autenticadas.
-
----
 
 ## Testes de Permissão (Usuário logado como Diretor)
 
@@ -234,8 +226,6 @@ http://localhost:3333/tecnicos
 
 * Escolha o `ID` de algum técnico retornado
 
----
-
 ### Deletar técnico (permitido para diretor)
 
 * Método: **DELETE**
@@ -247,8 +237,6 @@ http://localhost:3333/tecnicos/ID
 
 O diretor possui permissão para deletar técnicos.
 
----
-
 ### Atualizar técnico (alterar papel)
 
 * Método: **PUT**
@@ -258,17 +246,15 @@ O diretor possui permissão para deletar técnicos.
 http://localhost:3333/tecnicos/SEU_ID
 ```
 
-* Body (JSON):
+* Payload - Body (JSON):
 
 ```json
 {
-  "nome": "Keylly",
-  "matricula": "1886551",
+  "nome": "seu_nome",
+  "matricula": "sua_matricula",
   "role_nome": "tecnico"
 }
 ```
-
----
 
 ### Teste de restrição de permissão
 
@@ -283,4 +269,3 @@ DELETE http://localhost:3333/tecnicos/ID
 Resultado esperado:
 
 * Acesso **negado**, comprovando o funcionamento do controle de permissões (RBAC).
-
