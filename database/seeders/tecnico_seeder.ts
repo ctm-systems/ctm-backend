@@ -1,17 +1,18 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import Tecnico from '#models/tecnico'
-import Role from '#models/role'
+import Role, { Roles } from '#models/role'
 
 export default class extends BaseSeeder {
   async run() {
-    const roleDiretor = await Role.updateOrCreate({ nome: 'diretor' }, { nome: 'diretor' })
-    const roleTecnico = await Role.updateOrCreate({ nome: 'tecnico' }, { nome: 'tecnico' })
+    const roleDiretor = await Role.query().where('nome', Roles.diretor).firstOrFail()
+    const roleTecnico = await Role.query().where('nome', Roles.tecnico).firstOrFail()
 
     const tecnicosData = [
-      { nome: 'Jardson', matricula: '20241038060006' },
-      { nome: 'Ian', matricula: '20241038060011' },
-      { nome: 'Robério', matricula: '20241038060010' },
-      { nome: 'Lucas', matricula: '20241038060003' },
+      { nome: 'Keylly', matricula: '1886551', roles: [roleDiretor.id] },
+      { nome: 'Jardson', matricula: '20241038060006', roles: [roleDiretor.id] },
+      { nome: 'Ian', matricula: '20241038060011', roles: [roleDiretor.id] },
+      { nome: 'Robério', matricula: '20241038060010', roles: [roleTecnico.id] },
+      { nome: 'Lucas', matricula: '20241038060003', roles: [roleTecnico.id] },
     ]
 
     for (const data of tecnicosData) {
@@ -20,11 +21,7 @@ export default class extends BaseSeeder {
         { nome: data.nome }
       )
 
-      if (tecnico.nome === 'Jardson') {
-        await tecnico.related('roles').sync([roleDiretor.id])
-      } else {
-        await tecnico.related('roles').sync([roleTecnico.id])
-      }
+      await tecnico.related('roles').sync(data.roles)
     }
   }
 }

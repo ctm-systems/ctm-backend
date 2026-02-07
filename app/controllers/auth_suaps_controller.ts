@@ -71,7 +71,7 @@ export default class AuthSuapsController {
         path: '/',
       })
 
-      return response.ok({ message: 'Autenticado via OAuth' })
+      return response.ok({ message: 'Autenticado via OAuth', token_recebido: !!token })
     } catch (error) {
       console.error('Controller Auth Suap: Erro no Callback:', error)
       return response.badRequest({ message: 'Falha na autorização' })
