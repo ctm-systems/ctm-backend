@@ -9,6 +9,7 @@
 - [Descrição](#descrição)
 - [Tecnologias utilizadas](#tecnologias-utilizadas)
 - [Instruções de inicialização da aplicação](#instruções-de-inicialização-da-aplicação)
+- [Documentação dos endpoints da API](#documentação-dos-endpoints-da-api)
 - [Mecanismo de autenticação](#mecanismo-de-autenticação)
 - [Regras de autorização](#regras-de-autorização)
 - [Configuração de credenciais de acesso](#configuração-de-credenciais-de-acesso)
@@ -34,6 +35,9 @@ O sistema desenvolvido consiste em uma API corporativa voltada para a gestão de
 
 * **SUAP** (Sistema Unificado de Administração Pública) – Autenticação institucional via OAuth2;
 
+## Arquitetura
+<img src="./assets/diagrama.png"></img>
+
 ## Instruções de Inicialização da Aplicação
 
 1. Clone o repositório:
@@ -57,6 +61,129 @@ docker compose up --build
 ```
 http://localhost:3333
 ```
+
+## Documentação dos Endpoints da API
+
+### Endpoints de Autenticação
+
+#### Públicos (sem autenticação)
+- **GET /** - Endpoint de verificação de funcionamento
+- **GET /auth/url** - Gera URL de autorização OAuth2 para login via SUAP
+- **POST /auth/callback** - Processa callback de autenticação do SUAP
+
+#### Autenticados (requer token SUAP)
+- **GET /auth/data** - Retorna dados do usuário autenticado
+- **GET /auth/logout** - Encerra sessão e remove token
+
+### Endpoints CRUD Principais (Autenticado no sistema)
+
+#### Amostras
+- **GET /amostras** - Lista todas as amostras
+- **GET /amostras/:id** - Detalhes de uma amostra específica
+- **POST /amostras** - Cria nova amostra
+- **PUT /amostras/:id** - Atualiza amostra completa
+- **PATCH /amostras/:id** - Atualiza amostra parcialmente
+- **DELETE /amostras/:id** - Remove amostra
+
+#### Clientes
+- **GET /clientes** - Lista todos os clientes
+- **GET /clientes/:id** - Detalhes de um cliente específico
+- **POST /clientes** - Cria novo cliente
+- **PUT /clientes/:id** - Atualiza cliente completo
+- **PATCH /clientes/:id** - Atualiza cliente parcialmente
+- **DELETE /clientes/:id** - Remove cliente
+
+#### Orçamentos
+- **GET /orcamentos** - Lista todos os orçamentos
+- **GET /orcamentos/:id** - Detalhes de um orçamento específico
+- **POST /orcamentos** - Cria novo orçamento
+- **PUT /orcamentos/:id** - Atualiza orçamento completo
+- **PATCH /orcamentos/:id** - Atualiza orçamento parcialmente
+- **DELETE /orcamentos/:id** - Remove orçamento
+
+#### Planilhas
+- **GET /planilhas** - Lista todas as planilhas
+- **GET /planilhas/:id** - Detalhes de uma planilha específica
+- **GET /planilhas/:id/download** - Download da planilha
+- **POST /planilhas** - Cria nova planilha
+- **PUT /planilhas/:id** - Atualiza planilha completa
+- **PATCH /planilhas/:id** - Atualiza planilha parcialmente
+- **DELETE /planilhas/:id** - Remove planilha
+
+#### Processos
+- **GET /processos** - Lista todos os processos
+- **GET /processos/:id** - Detalhes de um processo específico
+- **POST /processos** - Cria novo processo *(role: diretor)*
+- **PUT /processos/:id** - Atualiza processo completo *(role: diretor)*
+- **PATCH /processos/:id** - Atualiza processo parcialmente *(role: diretor)*
+- **DELETE /processos/:id** - Remove processo *(role: diretor)*
+
+#### Técnicos
+- **GET /tecnicos** - Lista todos os técnicos
+- **GET /tecnicos/:id** - Detalhes de um técnico específico
+- **POST /tecnicos** - Cria novo técnico *(role: diretor)*
+- **PUT /tecnicos/:id** - Atualiza técnico completo *(role: diretor)*
+- **PATCH /tecnicos/:id** - Atualiza técnico parcialmente *(role: diretor)*
+- **DELETE /tecnicos/:id** - Remove técnico *(role: diretor)*
+
+#### Tipos de Amostras
+- **GET /tipos-amostras** - Lista todos os tipos de amostras
+- **GET /tipos-amostras/:id** - Detalhes de um tipo de amostra específico
+- **POST /tipos-amostras** - Cria novo tipo de amostra
+- **PUT /tipos-amostras/:id** - Atualiza tipo de amostra completo
+- **PATCH /tipos-amostras/:id** - Atualiza tipo de amostra parcialmente
+- **DELETE /tipos-amostras/:id** - Remove tipo de amostra
+
+### Endpoints de Relacionamentos
+
+#### Cliente-Técnico
+- **POST /clientes/:id/adicionar-tecnico** - Associa técnico a cliente
+- **POST /clientes/:id/remover-tecnico** - Remove associação técnico-cliente
+
+#### Amostra-Processo
+- **POST /amostras/:id/adicionar-processo** - Associa processo a amostra
+- **POST /amostras/:id/remover-processo** - Remove associação amostra-processo
+
+#### Orçamento-Amostra
+- **POST /orcamentos/:id/adicionar-amostra** - Associa amostra a orçamento
+- **POST /orcamentos/:id/remover-amostra** - Remove associação orçamento-amostra
+
+### Níveis de Autorização
+
+#### 🌍 Público
+- Endpoint de status e URLs de autenticação
+
+#### 🔐 Autenticado
+- Todos os endpoints CRUD
+- Endpoints de relacionamentos
+- Download de planilhas
+- Dados do usuário e logout
+
+#### 👑 Diretor (role: diretor)
+- Operações CRUD em técnicos (create, update, delete)
+- Operações CRUD em processos (create, update, delete)
+
+### Formato de Resposta
+
+Todos os endpoints retornam JSON com estrutura consistente:
+
+```json
+{
+  "data": { ... }
+}
+```
+
+### Códigos de Status HTTP
+
+- **200** - Sucesso geral
+- **201** - Recurso criado
+- **204** - Sucesso sem conteúdo (delete)
+- **400** - Dados inválidos
+- **401** - Não autenticado
+- **403** - Sem permissão (role insuficiente)
+- **404** - Recurso não encontrado
+- **422** - Erro de validação
+- **500** - Erro interno do servidor
 
 ## Mecanismo de Autenticação
 
