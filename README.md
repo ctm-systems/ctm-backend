@@ -15,6 +15,7 @@
 - [Configuração de credenciais de acesso](#configuração-de-credenciais-de-acesso)
 - [Exemplos de requisições (Insomnia)](#exemplos-de-requisições-insomnia)
 - [Contribuindo](#contribuindo)
+- [Licença](#licença)
 - [Autores](#autores)
 
 ## Descrição
@@ -509,6 +510,12 @@ Resultado esperado:
 3. Commit suas mudanças (`git commit -m 'Adiciona minha feature'`);
 4. Envie para o repositório (`git push origin minha-feature`);
 5. Abra um Pull Request.
+
+## Licença
+
+Este projeto está licenciado sob a **MIT License**.
+
+Consulte o arquivo [LICENSE](LICENSE) para os detalhes completos.
 
 ## Autores
 [<img loading="lazy" src="https://avatars.githubusercontent.com/u/137799663?s=48&v=4" width=115>](https://github.com/Barr0ca) [<img loading="lazy" src="https://avatars.githubusercontent.com/u/138258644?v=4" width=115>](https://github.com/jardsonalan) [<img loading="lazy" src="https://avatars.githubusercontent.com/u/162215028?v=4" width=115>](https://github.com/uluscaz-ifrn) [<img loading="lazy" src="https://avatars.githubusercontent.com/u/204107954?v=4" width=115>](https://github.com/roberio-junior)
